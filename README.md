@@ -19,6 +19,8 @@ pip install -r requirements.txt
 - `validators` - Validate emails, URLs, etc.
 - `scraper` - Web scraping helpers
 - `db_utils` - SQLite helpers
+- `duckdb_utils` - DuckDB queries and imports
+- `parquet_utils` - Parquet file operations
 - `config_loader` - Load configs from various formats
 - `log_setup` - Logging configuration
 - `cache` - Simple file cache

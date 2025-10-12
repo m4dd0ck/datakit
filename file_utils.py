@@ -1,4 +1,7 @@
-"""File and directory utilities."""
+"""File and directory utilities.
+
+Safe file operations with path handling and common patterns.
+"""
 
 import hashlib
 import shutil

@@ -1,4 +1,7 @@
-"""CSV reading, writing, and cleaning utilities."""
+"""CSV reading, writing, and cleaning utilities.
+
+All functions work with lists of dicts where keys are column names.
+"""
 
 import csv
 from pathlib import Path

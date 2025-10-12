@@ -84,21 +84,29 @@ def execute_write(
 
 
 def table_exists(db_path: str | Path, table_name: str) -> bool:
-    """Check if a table exists in the database."""
+    """Check if a table exists in the database.
+
+    Args:
+        db_path: Path to SQLite database
+        table_name: Name of table to check
+    """
     query = "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
     result = execute_query(db_path, query, (table_name,))
     return len(result) > 0
 
 
 def get_tables(db_path: str | Path) -> list[str]:
-    """Get list of all tables in database."""
+    """Get list of all table names in database."""
     query = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
     result = execute_query(db_path, query)
     return [row["name"] for row in result]
 
 
 def get_columns(db_path: str | Path, table_name: str) -> list[dict[str, Any]]:
-    """Get column info for a table."""
+    """Get column info for a table.
+
+    Returns list of dicts from PRAGMA table_info (cid, name, type, etc).
+    """
     query = f"PRAGMA table_info({table_name})"
     return execute_query(db_path, query)
 

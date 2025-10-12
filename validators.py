@@ -1,4 +1,8 @@
-"""Validation utilities for common data types."""
+"""Validation utilities for common data types.
+
+All validators return bool - True if valid, False otherwise.
+None and empty strings are considered invalid.
+"""
 
 import re
 from urllib.parse import urlparse

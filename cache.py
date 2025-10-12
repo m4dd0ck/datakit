@@ -9,7 +9,11 @@ from typing import Any, Callable
 
 
 class FileCache:
-    """Simple file-based cache with TTL support."""
+    """Simple file-based cache with TTL support.
+
+    Stores pickled values in a cache directory. Each key gets its own file.
+    Expired entries are cleaned up on read or via cleanup_expired().
+    """
 
     def __init__(self, cache_dir: str | Path = ".cache", default_ttl: int = 3600):
         """Initialize file cache.
@@ -29,7 +33,11 @@ class FileCache:
         return self.cache_dir / f"{hashed}.cache"
 
     def get(self, key: str) -> Any | None:
-        """Get value from cache, or None if missing/expired."""
+        """Get value from cache.
+
+        Returns None if key not found or entry has expired.
+        Expired entries are deleted on read.
+        """
         path = self._get_path(key)
         if not path.exists():
             return None

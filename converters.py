@@ -1,4 +1,8 @@
-"""Unit conversion utilities."""
+"""Unit conversion utilities.
+
+Temperature, distance, weight, volume, data size, and time conversions.
+All functions take a numeric value and return the converted value.
+"""
 
 from typing import Literal
 

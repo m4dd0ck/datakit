@@ -75,7 +75,11 @@ def slugify(s: str, separator: str = "-") -> str:
 
 
 def truncate(s: str, length: int, suffix: str = "...") -> str:
-    """Truncate string to max length with suffix."""
+    """Truncate string to max length, adding suffix if truncated.
+
+    The suffix is included in the length limit.
+    Example: truncate("hello world", 8) -> "hello..."
+    """
     if len(s) <= length:
         return s
     return s[: length - len(suffix)] + suffix
@@ -112,13 +116,19 @@ def mask_string(s: str, visible_start: int = 2, visible_end: int = 2, mask_char:
 
 
 def to_snake_case(s: str) -> str:
-    """Convert string to snake_case."""
+    """Convert string to snake_case.
+
+    Example: "myVariableName" -> "my_variable_name"
+    """
     s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", s)
     s = re.sub(r"([a-z\d])([A-Z])", r"\1_\2", s)
     return s.replace("-", "_").lower()
 
 
 def to_camel_case(s: str) -> str:
-    """Convert string to camelCase."""
+    """Convert string to camelCase.
+
+    Example: "my_variable_name" -> "myVariableName"
+    """
     parts = re.split(r"[_\-\s]+", s)
     return parts[0].lower() + "".join(p.title() for p in parts[1:])

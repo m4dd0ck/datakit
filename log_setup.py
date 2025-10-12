@@ -51,17 +51,26 @@ def get_logger(name: str) -> logging.Logger:
 
 
 class LogContext:
-    """Context manager that logs entry and exit."""
+    """Context manager that logs entry and exit.
+
+    Usage:
+        with LogContext(logger, "processing files"):
+            do_work()
+        # Logs "Starting: processing files" and "Completed: processing files"
+    """
 
     def __init__(self, logger: logging.Logger, message: str):
+        """Initialize context with logger and description message."""
         self.logger = logger
         self.message = message
 
     def __enter__(self):
+        """Log start message on context entry."""
         self.logger.info(f"Starting: {self.message}")
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """Log completion or failure on context exit."""
         if exc_type:
             self.logger.error(f"Failed: {self.message} - {exc_val}")
         else:

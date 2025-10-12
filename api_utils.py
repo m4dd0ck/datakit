@@ -47,7 +47,13 @@ def retry(
 
 
 class APIClient:
-    """Simple API client with retry and common patterns."""
+    """Simple API client with retry and common patterns.
+
+    Usage:
+        with APIClient("https://api.example.com") as client:
+            client.set_auth_token("my-token")
+            data = client.get("/users")
+    """
 
     def __init__(
         self,
@@ -98,41 +104,43 @@ class APIClient:
         raise last_error
 
     def get(self, endpoint: str, params: dict | None = None, **kwargs) -> Any:
-        """Make GET request and return JSON."""
+        """Make GET request and return parsed JSON response."""
         response = self._request("GET", endpoint, params=params, **kwargs)
         return response.json()
 
     def post(self, endpoint: str, data: dict | None = None, json: dict | None = None, **kwargs) -> Any:
-        """Make POST request and return JSON."""
+        """Make POST request and return parsed JSON response."""
         response = self._request("POST", endpoint, data=data, json=json, **kwargs)
         return response.json()
 
     def put(self, endpoint: str, data: dict | None = None, json: dict | None = None, **kwargs) -> Any:
-        """Make PUT request and return JSON."""
+        """Make PUT request and return parsed JSON response."""
         response = self._request("PUT", endpoint, data=data, json=json, **kwargs)
         return response.json()
 
     def delete(self, endpoint: str, **kwargs) -> Any:
-        """Make DELETE request and return JSON."""
+        """Make DELETE request and return parsed JSON response (if any)."""
         response = self._request("DELETE", endpoint, **kwargs)
         if response.content:
             return response.json()
         return None
 
     def set_auth_token(self, token: str, prefix: str = "Bearer") -> None:
-        """Set authorization header."""
+        """Set Authorization header for subsequent requests."""
         self.session.headers["Authorization"] = f"{prefix} {token}"
 
     def set_api_key(self, key: str, header_name: str = "X-API-Key") -> None:
-        """Set API key header."""
+        """Set API key header for subsequent requests."""
         self.session.headers[header_name] = key
 
     def close(self) -> None:
-        """Close the session."""
+        """Close the underlying requests session."""
         self.session.close()
 
     def __enter__(self) -> "APIClient":
+        """Context manager entry."""
         return self
 
     def __exit__(self, *args) -> None:
+        """Context manager exit, closes session."""
         self.close()

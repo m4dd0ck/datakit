@@ -8,9 +8,14 @@ from typing import Any
 
 
 class ExtendedEncoder(json.JSONEncoder):
-    """JSON encoder that handles common Python types."""
+    """JSON encoder that handles common Python types.
+
+    Converts: datetime/date -> ISO string, Decimal -> float,
+    set -> list, Path -> string.
+    """
 
     def default(self, obj):
+        """Serialize non-standard types to JSON-compatible values."""
         if isinstance(obj, (datetime, date)):
             return obj.isoformat()
         if isinstance(obj, Decimal):
@@ -23,7 +28,15 @@ class ExtendedEncoder(json.JSONEncoder):
 
 
 def read_json(path: str | Path, encoding: str = "utf-8") -> Any:
-    """Read JSON file."""
+    """Read and parse a JSON file.
+
+    Args:
+        path: Path to JSON file
+        encoding: File encoding
+
+    Returns:
+        Parsed JSON data (dict, list, or primitive)
+    """
     with open(path, encoding=encoding) as f:
         return json.load(f)
 

@@ -36,31 +36,43 @@ def fetch_page(
 
 
 def extract_text(soup: BeautifulSoup, selector: str) -> str:
-    """Extract text from first matching element."""
+    """Extract text from first element matching CSS selector.
+
+    Returns empty string if no match.
+    """
     element = soup.select_one(selector)
     return element.get_text(strip=True) if element else ""
 
 
 def extract_texts(soup: BeautifulSoup, selector: str) -> list[str]:
-    """Extract text from all matching elements."""
+    """Extract text from all elements matching CSS selector."""
     elements = soup.select(selector)
     return [el.get_text(strip=True) for el in elements]
 
 
 def extract_attr(soup: BeautifulSoup, selector: str, attr: str) -> str | None:
-    """Extract attribute value from first matching element."""
+    """Extract attribute value from first element matching CSS selector.
+
+    Returns None if no match or attribute missing.
+    """
     element = soup.select_one(selector)
     return element.get(attr) if element else None
 
 
 def extract_attrs(soup: BeautifulSoup, selector: str, attr: str) -> list[str]:
-    """Extract attribute values from all matching elements."""
+    """Extract attribute values from all elements matching CSS selector.
+
+    Skips elements where the attribute is missing.
+    """
     elements = soup.select(selector)
     return [el.get(attr) for el in elements if el.get(attr)]
 
 
 def extract_links(soup: BeautifulSoup, base_url: str = "") -> list[str]:
-    """Extract all links from page, optionally making them absolute."""
+    """Extract all href values from anchor tags.
+
+    If base_url provided, converts relative links to absolute.
+    """
     links = []
     for a in soup.find_all("a", href=True):
         href = a["href"]
@@ -110,7 +122,10 @@ def extract_table(soup: BeautifulSoup, selector: str = "table") -> list[dict[str
 
 
 class RateLimitedScraper:
-    """Scraper with rate limiting."""
+    """Scraper with rate limiting.
+
+    Automatically delays between requests to avoid hammering servers.
+    """
 
     def __init__(self, delay: float = 1.0):
         """Initialize with delay between requests.
@@ -122,7 +137,7 @@ class RateLimitedScraper:
         self.last_request = 0.0
 
     def fetch(self, url: str, **kwargs) -> BeautifulSoup:
-        """Fetch page with rate limiting."""
+        """Fetch page, sleeping if needed to respect rate limit."""
         elapsed = time.time() - self.last_request
         if elapsed < self.delay:
             time.sleep(self.delay - elapsed)
@@ -133,6 +148,9 @@ class RateLimitedScraper:
 
 
 def get_domain(url: str) -> str:
-    """Extract domain from URL."""
+    """Extract domain (netloc) from URL.
+
+    Example: "https://example.com/path" -> "example.com"
+    """
     parsed = urlparse(url)
     return parsed.netloc

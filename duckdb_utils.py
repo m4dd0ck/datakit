@@ -198,7 +198,12 @@ def export_csv(
 
 
 def table_exists(db_path: str | Path, table_name: str) -> bool:
-    """Check if a table exists in the database."""
+    """Check if a table exists in the database.
+
+    Args:
+        db_path: Path to DuckDB database
+        table_name: Name of table to check
+    """
     result = query(
         "SELECT COUNT(*) as cnt FROM information_schema.tables WHERE table_name = ?",
         db_path,
@@ -208,7 +213,7 @@ def table_exists(db_path: str | Path, table_name: str) -> bool:
 
 
 def get_tables(db_path: str | Path) -> list[str]:
-    """Get list of all tables in database."""
+    """Get list of all table names in database."""
     result = query(
         "SELECT table_name FROM information_schema.tables WHERE table_schema = 'main' ORDER BY table_name",
         db_path,
@@ -236,6 +241,11 @@ def get_columns(db_path: str | Path, table_name: str) -> list[dict[str, str]]:
 
 
 def row_count(db_path: str | Path, table_name: str) -> int:
-    """Get row count for a table."""
+    """Get row count for a table.
+
+    Args:
+        db_path: Path to DuckDB database
+        table_name: Name of table to count
+    """
     result = query(f"SELECT COUNT(*) as cnt FROM {table_name}", db_path)
     return result[0]["cnt"]

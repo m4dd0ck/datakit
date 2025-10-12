@@ -7,7 +7,10 @@ from typing import Any, Iterable, Iterator
 
 # ANSI color codes
 class Colors:
-    """ANSI color codes for terminal output."""
+    """ANSI color codes for terminal output.
+
+    Use with colorize() or the helper functions (red, green, etc.).
+    """
     RESET = "\033[0m"
     BOLD = "\033[1m"
     DIM = "\033[2m"
@@ -71,7 +74,10 @@ def cyan(text: str, bold: bool = False) -> str:
 
 
 class ProgressBar:
-    """Simple progress bar for terminal output."""
+    """Simple progress bar for terminal output.
+
+    Updates in place on a single line. Shows progress, percentage, and ETA.
+    """
 
     def __init__(
         self,
@@ -102,12 +108,12 @@ class ProgressBar:
         self.start_time = time.time()
 
     def update(self, amount: int = 1) -> None:
-        """Update progress by amount."""
+        """Increment progress by amount and redraw."""
         self.current = min(self.current + amount, self.total)
         self._display()
 
     def set(self, value: int) -> None:
-        """Set progress to specific value."""
+        """Set progress to absolute value and redraw."""
         self.current = min(value, self.total)
         self._display()
 

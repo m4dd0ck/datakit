@@ -1,9 +1,12 @@
 """SQLite database utilities."""
 
 import sqlite3
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
+
+from sql_identifiers import quote_identifier
 
 
 @contextmanager
@@ -107,7 +110,7 @@ def get_columns(db_path: str | Path, table_name: str) -> list[dict[str, Any]]:
 
     Returns list of dicts from PRAGMA table_info (cid, name, type, etc).
     """
-    query = f"PRAGMA table_info({table_name})"
+    query = f"PRAGMA table_info({quote_identifier(table_name)})"
     return execute_query(db_path, query)
 
 
@@ -122,9 +125,9 @@ def insert_dict(db_path: str | Path, table_name: str, data: dict[str, Any]) -> i
     Returns:
         Inserted row ID
     """
-    columns = ", ".join(data.keys())
+    columns = ", ".join(quote_identifier(c) for c in data)
     placeholders = ", ".join("?" * len(data))
-    query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+    query = f"INSERT INTO {quote_identifier(table_name)} ({columns}) VALUES ({placeholders})"
 
     with get_connection(db_path, row_factory=False) as conn:
         cursor = conn.cursor()
@@ -152,9 +155,9 @@ def insert_many(
         return 0
 
     columns = list(data[0].keys())
-    col_str = ", ".join(columns)
+    col_str = ", ".join(quote_identifier(c) for c in columns)
     placeholders = ", ".join("?" * len(columns))
-    query = f"INSERT INTO {table_name} ({col_str}) VALUES ({placeholders})"
+    query = f"INSERT INTO {quote_identifier(table_name)} ({col_str}) VALUES ({placeholders})"
 
     rows = [tuple(d.get(c) for c in columns) for d in data]
     return execute_write(db_path, query, many=rows)

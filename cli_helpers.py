@@ -2,7 +2,8 @@
 
 import sys
 import time
-from typing import Any, Iterable, Iterator
+from collections.abc import Iterable, Iterator
+from typing import Any
 
 
 # ANSI color codes
@@ -11,6 +12,7 @@ class Colors:
 
     Use with colorize() or the helper functions (red, green, etc.).
     """
+
     RESET = "\033[0m"
     BOLD = "\033[1m"
     DIM = "\033[2m"
@@ -130,7 +132,8 @@ class ProgressBar:
         else:
             time_str = f" {elapsed:.1f}s"
 
-        line = f"\r{self.prefix}|{bar}| {self.current}/{self.total} ({percent:.0%}){time_str} {self.suffix}"
+        progress = f"{self.current}/{self.total} ({percent:.0%})"
+        line = f"\r{self.prefix}|{bar}| {progress}{time_str} {self.suffix}"
         sys.stdout.write(line)
         sys.stdout.flush()
 

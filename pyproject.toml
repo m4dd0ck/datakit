@@ -1,0 +1,35 @@
+[project]
+name = "datakit"
+version = "0.1.0"
+description = "Flat folder of standalone Python helpers for everyday data work: CSV, Excel, Parquet, SQLite, DuckDB, dates, text, HTTP"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.28.0",
+    "beautifulsoup4>=4.11.0",
+    "lxml>=4.9.0",
+    "openpyxl>=3.0.0",
+    "python-dateutil>=2.8.0",
+    "pyyaml>=6.0",
+    "duckdb>=0.9.0",
+    "pyarrow>=14.0.0",
+    "pandas>=2.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

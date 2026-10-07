@@ -1,11 +1,11 @@
 """Simple file-based caching utilities."""
 
 import hashlib
-import json
 import pickle
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
 class FileCache:
@@ -142,4 +142,5 @@ def cached(
             return result
 
         return wrapper
+
     return decorator

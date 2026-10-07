@@ -1,8 +1,9 @@
 """API client utilities with retry logic."""
 
 import time
-from typing import Any, Callable
+from collections.abc import Callable
 from functools import wraps
+from typing import Any
 
 import requests
 from requests.exceptions import RequestException
@@ -25,6 +26,7 @@ def retry(
     Returns:
         Decorated function
     """
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs) -> Any:
@@ -43,6 +45,7 @@ def retry(
             raise last_exception
 
         return wrapper
+
     return decorator
 
 
@@ -108,12 +111,16 @@ class APIClient:
         response = self._request("GET", endpoint, params=params, **kwargs)
         return response.json()
 
-    def post(self, endpoint: str, data: dict | None = None, json: dict | None = None, **kwargs) -> Any:
+    def post(
+        self, endpoint: str, data: dict | None = None, json: dict | None = None, **kwargs
+    ) -> Any:
         """Make POST request and return parsed JSON response."""
         response = self._request("POST", endpoint, data=data, json=json, **kwargs)
         return response.json()
 
-    def put(self, endpoint: str, data: dict | None = None, json: dict | None = None, **kwargs) -> Any:
+    def put(
+        self, endpoint: str, data: dict | None = None, json: dict | None = None, **kwargs
+    ) -> Any:
         """Make PUT request and return parsed JSON response."""
         response = self._request("PUT", endpoint, data=data, json=json, **kwargs)
         return response.json()

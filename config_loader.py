@@ -34,7 +34,7 @@ def load_env(prefix: str = "", strip_prefix: bool = True) -> dict:
     for key, value in os.environ.items():
         if prefix and not key.startswith(prefix):
             continue
-        new_key = key[len(prefix):] if strip_prefix and prefix else key
+        new_key = key[len(prefix) :] if strip_prefix and prefix else key
         result[new_key.lower()] = value
     return result
 

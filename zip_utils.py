@@ -2,7 +2,6 @@
 
 import zipfile
 from pathlib import Path
-from typing import Callable
 
 
 def create_zip(
@@ -81,12 +80,14 @@ def list_zip_contents(zip_path: str | Path) -> list[dict]:
     result = []
     with zipfile.ZipFile(zip_path, "r") as zf:
         for info in zf.infolist():
-            result.append({
-                "filename": info.filename,
-                "size": info.file_size,
-                "compressed_size": info.compress_size,
-                "is_dir": info.is_dir(),
-            })
+            result.append(
+                {
+                    "filename": info.filename,
+                    "size": info.file_size,
+                    "compressed_size": info.compress_size,
+                    "is_dir": info.is_dir(),
+                }
+            )
     return result
 
 

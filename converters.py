@@ -4,8 +4,6 @@ Temperature, distance, weight, volume, data size, and time conversions.
 All functions take a numeric value and return the converted value.
 """
 
-from typing import Literal
-
 
 # Temperature
 def celsius_to_fahrenheit(c: float) -> float:

@@ -143,7 +143,9 @@ def is_not_empty(value: str | None) -> bool:
     return bool(str(value).strip())
 
 
-def is_in_range(value: float | int, min_val: float | None = None, max_val: float | None = None) -> bool:
+def is_in_range(
+    value: float | int, min_val: float | None = None, max_val: float | None = None
+) -> bool:
     """Check if number is within range (inclusive)."""
     if min_val is not None and value < min_val:
         return False

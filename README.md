@@ -1,11 +1,12 @@
 # DataKit
 
-Collection of various tools universalized for cross-project use. DRY and KISS.
+Flat folder of standalone Python helpers for everyday data work: CSV, Excel, Parquet, SQLite, DuckDB, dates, text, HTTP. Copy a module into a project or import the folder.
 
 ## Install
 
 ```bash
-pip install -r requirements.txt
+uv sync            # or: pip install -r requirements.txt
+uv run pytest      # tests for the SQL helpers
 ```
 
 ## What's Here
@@ -20,6 +21,7 @@ pip install -r requirements.txt
 - `scraper` - Web scraping helpers
 - `db_utils` - SQLite helpers
 - `duckdb_utils` - DuckDB queries and imports
+- `sql_identifiers` - validates and quotes table/column names for the two modules above
 - `parquet_utils` - Parquet file operations
 - `config_loader` - Load configs from various formats
 - `log_setup` - Logging configuration
@@ -39,10 +41,8 @@ from dt_utils import parse_date
 from file_utils import find_files
 ```
 
-Most functions have docstrings.
+Most functions have docstrings. Table and column names passed to `db_utils` / `duckdb_utils` must be plain identifiers (`[A-Za-z_][A-Za-z0-9_]*`); anything else raises `InvalidIdentifierError` instead of being spliced into SQL. Values are always bound as parameters.
 
-## TODO
+## Status
 
-- [ ] Add proper tests
-- [ ] Package this properly
-- [ ] Better error handling in some places
+Tests cover the SQLite and DuckDB helpers. The rest is exercised by use, not tests.

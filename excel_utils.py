@@ -36,7 +36,7 @@ def read_excel(
 
     result = []
     for row in rows[header_row:]:
-        row_dict = dict(zip(headers, row))
+        row_dict = dict(zip(headers, row, strict=False))
         result.append(row_dict)
 
     wb.close()

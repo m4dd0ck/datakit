@@ -1,7 +1,6 @@
 """Web scraping utilities."""
 
 import time
-from typing import Any
 from urllib.parse import urljoin, urlparse
 
 import requests
@@ -23,9 +22,7 @@ def fetch_page(
     Returns:
         Parsed BeautifulSoup object
     """
-    default_headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; DataKit/1.0)"
-    }
+    default_headers = {"User-Agent": "Mozilla/5.0 (compatible; DataKit/1.0)"}
     if headers:
         default_headers.update(headers)
 
@@ -112,10 +109,10 @@ def extract_table(soup: BeautifulSoup, selector: str = "table") -> list[dict[str
     # Get data rows
     result = []
     tbody = table.find("tbody") or table
-    for row in tbody.find_all("tr")[1 if not table.find("thead") else 0:]:
+    for row in tbody.find_all("tr")[1 if not table.find("thead") else 0 :]:
         cells = [td.get_text(strip=True) for td in row.find_all(["td", "th"])]
         if cells:
-            row_dict = dict(zip(headers, cells))
+            row_dict = dict(zip(headers, cells, strict=False))
             result.append(row_dict)
 
     return result

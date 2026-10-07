@@ -95,18 +95,11 @@ def clean_csv(
     return result
 
 
-def filter_columns(
-    data: list[dict[str, Any]], columns: list[str]
-) -> list[dict[str, Any]]:
+def filter_columns(data: list[dict[str, Any]], columns: list[str]) -> list[dict[str, Any]]:
     """Keep only specified columns from data."""
     return [{k: row.get(k) for k in columns} for row in data]
 
 
-def rename_columns(
-    data: list[dict[str, Any]], mapping: dict[str, str]
-) -> list[dict[str, Any]]:
+def rename_columns(data: list[dict[str, Any]], mapping: dict[str, str]) -> list[dict[str, Any]]:
     """Rename columns using a mapping dict."""
-    return [
-        {mapping.get(k, k): v for k, v in row.items()}
-        for row in data
-    ]
+    return [{mapping.get(k, k): v for k, v in row.items()} for row in data]

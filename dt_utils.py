@@ -1,7 +1,6 @@
 """Datetime parsing and manipulation utilities."""
 
-from datetime import datetime, date, timedelta
-from typing import Any
+from datetime import date, datetime, timedelta
 
 from dateutil import parser as date_parser
 

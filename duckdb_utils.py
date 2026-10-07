@@ -5,8 +5,12 @@ from typing import Any
 
 import duckdb
 
+from sql_identifiers import quote_identifier, quote_literal
 
-def connect(db_path: str | Path | None = None, read_only: bool = False) -> duckdb.DuckDBPyConnection:
+
+def connect(
+    db_path: str | Path | None = None, read_only: bool = False
+) -> duckdb.DuckDBPyConnection:
     """Connect to DuckDB database.
 
     Args:
@@ -43,7 +47,7 @@ def query(
         else:
             result = con.execute(sql)
         columns = [desc[0] for desc in result.description]
-        return [dict(zip(columns, row)) for row in result.fetchall()]
+        return [dict(zip(columns, row, strict=True)) for row in result.fetchall()]
     finally:
         con.close()
 
@@ -116,11 +120,12 @@ def load_parquet(
     """
     con = connect(db_path)
     try:
-        con.execute(f"""
-            CREATE OR REPLACE TABLE {table_name} AS
-            SELECT * FROM read_parquet('{parquet_path}')
-        """)
-        result = con.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()
+        table = quote_identifier(table_name)
+        con.execute(
+            f"CREATE OR REPLACE TABLE {table} AS SELECT * FROM read_parquet(?)",
+            [str(parquet_path)],
+        )
+        result = con.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
         return result[0]
     finally:
         con.close()
@@ -147,11 +152,12 @@ def load_csv(
     """
     con = connect(db_path)
     try:
-        con.execute(f"""
-            CREATE OR REPLACE TABLE {table_name} AS
-            SELECT * FROM read_csv('{csv_path}', header={header}, delim='{delimiter}')
-        """)
-        result = con.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()
+        table = quote_identifier(table_name)
+        con.execute(
+            f"CREATE OR REPLACE TABLE {table} AS SELECT * FROM read_csv(?, header=?, delim=?)",
+            [str(csv_path), bool(header), delimiter],
+        )
+        result = con.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
         return result[0]
     finally:
         con.close()
@@ -171,7 +177,7 @@ def export_parquet(
     """
     con = connect(db_path, read_only=True)
     try:
-        con.execute(f"COPY ({sql}) TO '{output_path}' (FORMAT PARQUET)")
+        con.execute(f"COPY ({sql}) TO {quote_literal(str(output_path))} (FORMAT PARQUET)")
     finally:
         con.close()
 
@@ -192,7 +198,10 @@ def export_csv(
     """
     con = connect(db_path, read_only=True)
     try:
-        con.execute(f"COPY ({sql}) TO '{output_path}' (FORMAT CSV, HEADER {header})")
+        header_flag = "true" if header else "false"
+        con.execute(
+            f"COPY ({sql}) TO {quote_literal(str(output_path))} (FORMAT CSV, HEADER {header_flag})"
+        )
     finally:
         con.close()
 
@@ -215,7 +224,8 @@ def table_exists(db_path: str | Path, table_name: str) -> bool:
 def get_tables(db_path: str | Path) -> list[str]:
     """Get list of all table names in database."""
     result = query(
-        "SELECT table_name FROM information_schema.tables WHERE table_schema = 'main' ORDER BY table_name",
+        "SELECT table_name FROM information_schema.tables\n"
+        "WHERE table_schema = 'main' ORDER BY table_name",
         db_path,
     )
     return [row["table_name"] for row in result]
@@ -247,5 +257,5 @@ def row_count(db_path: str | Path, table_name: str) -> int:
         db_path: Path to DuckDB database
         table_name: Name of table to count
     """
-    result = query(f"SELECT COUNT(*) as cnt FROM {table_name}", db_path)
+    result = query(f"SELECT COUNT(*) as cnt FROM {quote_identifier(table_name)}", db_path)
     return result[0]["cnt"]

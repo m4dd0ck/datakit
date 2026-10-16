@@ -5,7 +5,7 @@ Flat folder of standalone Python helpers for everyday data work: CSV, Excel, Par
 ## Install
 
 ```bash
-uv sync            # or: pip install -r requirements.txt
+uv sync
 uv run pytest      # tests for the SQL helpers
 ```
 

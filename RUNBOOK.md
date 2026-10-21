@@ -25,8 +25,6 @@ from that one pair, so a copied file works on its own once its third-party packa
 
 ## Release
 
-Follows `~/developer/hq/CONVENTIONS.md` §Versioning (portfolio repos):
-
 1. On close checks green.
 2. Bump `version` in `pyproject.toml`, `uv lock`, one `chore: Release vX.Y.Z` commit.
 3. Annotated tag `vX.Y.Z`, push with `--tags`; tags only, no GitHub release, for this repo.
@@ -35,12 +33,3 @@ Follows `~/developer/hq/CONVENTIONS.md` §Versioning (portfolio repos):
 ## Restore on a new machine
 
 Clone and `uv sync`. There is no data and no key.
-
-## Validate
-
-```bash
-uv run ruff check .
-uv run ruff format --check .
-uv run pytest -q
-python3 ~/.claude/scripts/doc-check.py --repo .
-```

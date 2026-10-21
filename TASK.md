@@ -1,16 +1,13 @@
 # Tasks
 
-Single-repo status. Hand-kept; dates are absolute. Last reviewed **2026-10-20**. Cross-repo
-items are in `~/developer/hq/OPEN_ITEMS.md`.
+Single-repo status, kept by hand. Last reviewed **2026-10-20**.
 
 Tests cover the SQLite, DuckDB and identifier helpers; the other sixteen modules are exercised
-by use, not tests. Nothing in `~/developer` imports this repo.
+by use, not tests. No other repo imports this one.
 
 ## Needs the owner
 
-| Item | Why it is stuck | Added |
-|---|---|---|
-| **Move the clone under `~/developer/portfolio/`, or archive it** | The hq repo map's verdict is keep and move, while its consolidation note says archive; nothing uses the repo either way. The move is in hq OPEN_ITEMS §Codebase review and waits on the owner's sign-off | 2026-10-16 |
+Nothing.
 
 ## Queue
 

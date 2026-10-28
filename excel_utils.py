@@ -22,13 +22,12 @@ def read_excel(
         List of dicts, one per row
     """
     wb = load_workbook(path, read_only=True, data_only=True)
+    try:
+        ws = wb[sheet_name] if sheet_name else wb.active
+        rows = list(ws.iter_rows(values_only=True))
+    finally:
+        wb.close()
 
-    if sheet_name:
-        ws = wb[sheet_name]
-    else:
-        ws = wb.active
-
-    rows = list(ws.iter_rows(values_only=True))
     if not rows:
         return []
 
@@ -39,7 +38,6 @@ def read_excel(
         row_dict = dict(zip(headers, row, strict=False))
         result.append(row_dict)
 
-    wb.close()
     return result
 
 

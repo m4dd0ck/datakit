@@ -28,7 +28,8 @@ def create_zip(
         if directory:
             directory = Path(directory)
             for file in directory.rglob("*"):
-                if file.is_file():
+                # Reason: the output may sit inside the directory being zipped.
+                if file.is_file() and file.resolve() != output_path.resolve():
                     arcname = file.relative_to(directory)
                     zf.write(file, arcname)
 

@@ -4,6 +4,7 @@ import hashlib
 import pickle
 import time
 from collections.abc import Callable
+from functools import wraps
 from pathlib import Path
 from typing import Any
 
@@ -127,6 +128,7 @@ def cached(
     _cache = cache or FileCache()
 
     def decorator(func: Callable) -> Callable:
+        @wraps(func)
         def wrapper(*args, **kwargs) -> Any:
             # Generate cache key
             if key_func:

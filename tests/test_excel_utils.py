@@ -1,6 +1,7 @@
 import gc
 import os
 
+import pytest
 from openpyxl import Workbook
 
 import excel_utils
@@ -10,6 +11,9 @@ def count_open_files() -> int:
     return len(os.listdir("/dev/fd"))
 
 
+@pytest.mark.skipif(
+    not os.path.isdir("/dev/fd"), reason="counts open files through /dev/fd (macOS, Linux)"
+)
 def test_read_excel_closes_the_workbook_when_the_sheet_is_empty(tmp_path):
     path = tmp_path / "empty.xlsx"
     Workbook().save(path)

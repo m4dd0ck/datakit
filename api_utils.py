@@ -6,7 +6,8 @@ from functools import wraps
 from typing import Any
 
 import requests
-from requests.exceptions import RequestException
+from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests.exceptions import HTTPError, RequestException, Timeout
 
 
 def retry(
@@ -86,25 +87,27 @@ class APIClient:
         endpoint: str,
         **kwargs,
     ) -> requests.Response:
-        """Make a request with retry logic."""
+        """Make a request, retrying connection errors, timeouts and 5xx responses.
+
+        A 4xx response is raised at once: sending the same request again will not fix it.
+        """
         url = f"{self.base_url}/{endpoint.lstrip('/')}"
         kwargs.setdefault("timeout", self.timeout)
 
-        last_error = None
-        delay = 1.0
-
-        for attempt in range(self.max_retries):
-            try:
-                response = self.session.request(method, url, **kwargs)
+        @retry(
+            max_attempts=self.max_retries,
+            exceptions=(RequestsConnectionError, Timeout, HTTPError),
+        )
+        def send() -> requests.Response:
+            response = self.session.request(method, url, **kwargs)
+            # Reason: only server errors raise inside the retry; 4xx is raised below, once.
+            if response.status_code >= 500:
                 response.raise_for_status()
-                return response
-            except RequestException as e:
-                last_error = e
-                if attempt < self.max_retries - 1:
-                    time.sleep(delay)
-                    delay *= 2
+            return response
 
-        raise last_error
+        response = send()
+        response.raise_for_status()
+        return response
 
     def get(self, endpoint: str, params: dict | None = None, **kwargs) -> Any:
         """Make GET request and return parsed JSON response."""

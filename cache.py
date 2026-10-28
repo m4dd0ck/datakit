@@ -7,6 +7,9 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+# Reason: a cached value may itself be None, so a miss needs its own marker.
+_MISSING = object()
+
 
 class FileCache:
     """Simple file-based cache with TTL support.
@@ -32,15 +35,15 @@ class FileCache:
         hashed = hashlib.sha256(key.encode()).hexdigest()[:16]
         return self.cache_dir / f"{hashed}.cache"
 
-    def get(self, key: str) -> Any | None:
+    def get(self, key: str, default: Any = None) -> Any:
         """Get value from cache.
 
-        Returns None if key not found or entry has expired.
+        Returns default if key not found or entry has expired.
         Expired entries are deleted on read.
         """
         path = self._get_path(key)
         if not path.exists():
-            return None
+            return default
 
         try:
             with open(path, "rb") as f:
@@ -48,11 +51,11 @@ class FileCache:
 
             if data["expires_at"] and time.time() > data["expires_at"]:
                 path.unlink()
-                return None
+                return default
 
             return data["value"]
         except Exception:
-            return None
+            return default
 
     def set(self, key: str, value: Any, ttl: int | None = None) -> None:
         """Store value in cache.
@@ -132,8 +135,8 @@ def cached(
                 key = f"{func.__module__}.{func.__name__}:{args}:{kwargs}"
 
             # Try to get from cache
-            result = _cache.get(key)
-            if result is not None:
+            result = _cache.get(key, _MISSING)
+            if result is not _MISSING:
                 return result
 
             # Compute and cache

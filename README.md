@@ -23,7 +23,7 @@ them something to copy from rather than rewrite.
 
 ```bash
 uv sync
-uv run pytest      # tests for the SQL helpers
+uv run pytest      # tests under tests/
 ```
 
 ```python
@@ -72,7 +72,7 @@ parameters; file paths and delimiters go through `sql_identifiers.py` as quoted 
 | `cli_helpers.py` | progress bars, colours, prompts, tables |
 | `converters.py` | unit conversions and byte sizes |
 | `zip_utils.py` | zip create, extract, list, read, add |
-| `tests/` | tests for the SQLite, DuckDB and identifier helpers |
+| `tests/` | pytest tests, one file per tested module; `TASK.md` says what is covered |
 
 ## Decisions
 
@@ -91,6 +91,9 @@ parameters; file paths and delimiters go through `sql_identifiers.py` as quoted 
 - **2026-10-16** The old requirements file removed in favour of `pyproject.toml`.
 - **2026-10-17** CI on the shared template.
 - **2026-10-20** Four-file skeleton; the status line and the untested-module note moved to `TASK.md`.
+- **2026-10-28** Tests for the CSV, JSON, Parquet, date and validator helpers; fixes for
+  `read_csv(skip_header=True)`, `cache.cached`, `APIClient` retries, `create_zip` and
+  `read_excel`.
 
 ## Development
 

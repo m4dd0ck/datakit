@@ -58,3 +58,12 @@ def test_filter_columns_keeps_listed_columns_and_fills_missing_with_none():
 def test_rename_columns_renames_mapped_keys_only():
     data = [{"a": 1, "b": 2}]
     assert csv_utils.rename_columns(data, {"a": "x"}) == [{"x": 1, "b": 2}]
+
+
+def test_read_csv_skip_header_returns_every_data_row_keyed_by_position(tmp_path):
+    path = tmp_path / "data.csv"
+    path.write_text("name,qty\na,1\nb,2\n", encoding="utf-8")
+    assert csv_utils.read_csv(path, skip_header=True) == [
+        {"col_0": "a", "col_1": "1"},
+        {"col_0": "b", "col_1": "2"},
+    ]

@@ -19,17 +19,19 @@ def read_csv(
     Args:
         path: Path to CSV file
         delimiter: Column delimiter
-        skip_header: If True, skip first row
+        skip_header: If True, skip the first row (the header) and key every
+            remaining row by column position: col_0, col_1, ...
         encoding: File encoding
 
     Returns:
-        List of dicts, one per row
+        List of dicts, one per data row
     """
     with open(path, encoding=encoding, newline="") as f:
         if skip_header:
-            next(f)
-        reader = csv.DictReader(f, delimiter=delimiter)
-        return list(reader)
+            rows = csv.reader(f, delimiter=delimiter)
+            next(rows, None)
+            return [{f"col_{i}": value for i, value in enumerate(row)} for row in rows]
+        return list(csv.DictReader(f, delimiter=delimiter))
 
 
 def write_csv(
